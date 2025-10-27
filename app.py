@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import random
+import shutil # Folder delete panna thevai
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
@@ -22,8 +23,8 @@ from sqlalchemy import extract
 
 # --- App Configuration ---
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-strong-secret-key-replace-me-123456789') # Change in production
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../instance/church.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-strong-secret-key-replace-me-123456789')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///../instance/church.db') # Render-ku
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
@@ -31,9 +32,8 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 465))
 app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'True').lower() in ['true', '1', 't']
-# TODO: REPLACE with your real email and Gmail App Password
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com') 
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password') 
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', ('CSI Ulaga Ratchagar Aalayam', app.config['MAIL_USERNAME']))
 
 mail = Mail(app) if Mail else None
@@ -46,7 +46,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
 
-# --- Database Models (Correct Indentation) ---
+# --- Database Models ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -81,6 +81,8 @@ class Sermon(db.Model):
     date = db.Column(db.Date, nullable=False)
     youtube_embed_url = db.Column(db.String(255), nullable=True)
 
+# === VideoClip MODEL DELETE PANNITOM ===
+
 class PrayerRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -114,7 +116,7 @@ class Donation(db.Model):
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 # --- Helper Functions ---
-def convert_to_embed_url(url_str):
+def convert_to_embed_url(url_str): # Video link-ku ithu theva
     if not url_str: return None
     try:
         if not url_str.startswith(('http://', 'https://')): url_str = 'https://' + url_str
@@ -124,14 +126,19 @@ def convert_to_embed_url(url_str):
             elif parsed_url.path.startswith("/embed/"): video_id = parsed_url.path.split('/embed/')[1].split('/')[0].split('?')[0]
             elif parsed_url.path.startswith("/shorts/"): video_id = parsed_url.path.split('/shorts/')[1].split('/')[0].split('?')[0]
         elif "youtu.be" in hostname: video_id = parsed_url.path[1:].split('/')[0].split('?')[0]
-        if video_id and len(video_id) == 11 and all(c.isalnum() or c in ['-', '_'] for c in video_id): return f"https://www.youtube.com/embed/{video_id}"
-        else: print(f"Invalid YT ID: {url_str}"); return None
-    except Exception as e: print(f"YT Parse Error '{url_str}': {e}"); return None
+        elif "vimeo.com" in hostname:
+            video_id = parsed_url.path.split('/')[-1]
+            if video_id.isdigit(): return f"https://player.vimeo.com/video/{video_id}"
+        
+        if video_id and len(video_id) >= 11 and all(c.isalnum() or c in ['-', '_'] for c in video_id): return f"https://www.youtube.com/embed/{video_id}"
+        elif 'player.vimeo.com' in url_str: return url_str
+        else: print(f"Invalid YT/Vimeo ID: {url_str}"); return None
+    except Exception as e: print(f"YT/Vimeo Parse Error '{url_str}': {e}"); return None
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_daily_bible_verse(): # <-- SARIAANA VERSION INGEY
+def get_daily_bible_verse():
     verses = [
         {"ref": "John 3:16", "text": "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."},
         {"ref": "Philippians 4:13", "text": "I can do all this through him who gives me strength."},
@@ -140,17 +147,11 @@ def get_daily_bible_verse(): # <-- SARIAANA VERSION INGEY
     return random.choice(verses) if verses else {"ref": "Info", "text": "Verse unavailable."}
 
 def get_birthday_verse():
-    verses = [
-        {"ref": "Numbers 6:24-26", "text": "The LORD bless you and keep you; the LORD make his face shine upon you and be gracious to you; the LORD turn his face toward you and give you peace."},
-        {"ref": "Psalm 118:24", "text": "This is the day the LORD has made; let us rejoice and be glad in it."},
-    ]
+    verses = [{"ref": "Numbers 6:24-26", "text": "The LORD bless you and keep you..."}, {"ref": "Psalm 118:24", "text": "This is the day the LORD has made..."}]
     return random.choice(verses) if verses else None
 
 def get_marriage_verse():
-    verses = [
-        {"ref": "1 Corinthians 13:4-7", "text": "Love is patient, love is kind... It always protects, always trusts, always hopes, always perseveres."},
-        {"ref": "Ephesians 4:2-3", "text": "Be completely humble and gentle; be patient, bearing with one another in love."},
-    ]
+    verses = [{"ref": "1 Corinthians 13:4-7", "text": "Love is patient, love is kind..."}, {"ref": "Ephesians 4:2-3", "text": "Be completely humble and gentle..."}]
     return random.choice(verses) if verses else None
 
 def parse_date_or_none(date_str):
@@ -160,15 +161,20 @@ def parse_date_or_none(date_str):
 
 def log_activity(message):
     try:
-        log = ActivityLog(message=message)
-        db.session.add(log); db.session.commit()
+        if db.inspect(db.engine).has_table('activity_log'):
+            log = ActivityLog(message=message)
+            db.session.add(log); db.session.commit()
+        else:
+            print(f"Log Info: ActivityLog table not found. Skipping log: {message}")
     except Exception as e: db.session.rollback(); print(f"!!! Log Error: {e}")
 
 def get_gallery_data():
     gallery_data = []
     base_path = app.config.get('UPLOAD_FOLDER')
-    if not base_path or not os.path.exists(base_path) or not os.path.isdir(base_path):
-        print("Gallery base path error."); return []
+    if not base_path: print("UPLOAD_FOLDER error."); return []
+    if not os.path.exists(base_path):
+        try: os.makedirs(base_path, exist_ok=True)
+        except OSError as e: print(f"Gallery path creation error: {e}"); return []
     try:
         main_folders = sorted([d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))], reverse=True)
         for main_folder in main_folders:
@@ -201,12 +207,13 @@ def home():
     active_notices = []; birthday_members_today = []; recent_activity = []; marriage_members_today = []
     birthday_verse = None; marriage_verse = None
     try:
-        active_notices = Notice.query.filter_by(is_active=True).order_by(Notice.created_at.desc()).limit(3).all()
+        if db.inspect(db.engine).has_table('notice'):
+            active_notices = Notice.query.filter_by(is_active=True).order_by(Notice.created_at.desc()).limit(3).all()
         today = datetime.utcnow().date()
-        if hasattr(Member, 'dob') and Member.dob is not None:
+        if db.inspect(db.engine).has_table('member') and hasattr(Member, 'dob') and Member.dob is not None:
              birthday_members_today = Member.query.filter(extract('month', Member.dob) == today.month, extract('day', Member.dob) == today.day).all()
              if birthday_members_today: birthday_verse = get_birthday_verse()
-        if hasattr(Member, 'marriage_date') and Member.marriage_date is not None:
+        if db.inspect(db.engine).has_table('member') and hasattr(Member, 'marriage_date') and Member.marriage_date is not None:
             marriage_members_today = Member.query.filter(extract('month', Member.marriage_date) == today.month, extract('day', Member.marriage_date) == today.day).all()
             if marriage_members_today: marriage_verse = get_marriage_verse()
         if db.inspect(db.engine).has_table('activity_log'):
@@ -229,7 +236,8 @@ def services():
     upcoming_events = []; weekly_services = []
     try:
         now = datetime.utcnow()
-        upcoming_events = Event.query.filter(Event.date >= now).order_by(Event.date.asc()).all()
+        if db.inspect(db.engine).has_table('event'):
+            upcoming_events = Event.query.filter(Event.date >= now).order_by(Event.date.asc()).all()
         if db.inspect(db.engine).has_table('weekly_service'):
             weekly_services = WeeklyService.query.order_by(WeeklyService.display_order, WeeklyService.service_name).all()
     except Exception as e: print(f"Services fetch error: {e}"); flash('Error loading schedule.', 'warning')
@@ -273,6 +281,7 @@ def submit_donation_info():
 @app.route('/gallery')
 def gallery():
     gallery_data = get_gallery_data()
+    # === VIDEO CLIP CODE DELETE PANNITOM ===
     return render_template('gallery.html', gallery_data=gallery_data)
 
 @app.route('/contact')
@@ -287,7 +296,9 @@ def member_directory():
 # --- Admin Authentication & Decorator ---
 def is_admin():
     admin_id = session.get('admin_id')
-    return admin_id and User.query.get(admin_id) is not None
+    if admin_id and db.inspect(db.engine).has_table('user'):
+        return User.query.get(admin_id) is not None
+    return False
 
 def admin_required(f):
     @wraps(f)
@@ -578,12 +589,55 @@ def delete_gallery_image(main_folder, sub_folder, filename):
     except Exception as e: flash(f'Error deleting: {e}', 'danger'); print(f"Delete image error: {e}")
     return redirect(url_for('admin_gallery'))
 
+@app.route('/admin/gallery/delete_folder/<main_folder>/<sub_folder>')
+@admin_required
+def delete_gallery_folder(main_folder, sub_folder):
+    safe_main_folder = secure_filename(main_folder.replace(' ', '_'))
+    safe_sub_folder = secure_filename(sub_folder.replace(' ', '_'))
+    if safe_main_folder != main_folder.replace(' ', '_') or safe_sub_folder != sub_folder.replace(' ', '_'):
+        flash('Invalid folder name.', 'danger'); return redirect(url_for('admin_gallery'))
+    try:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_main_folder, safe_sub_folder)
+        if os.path.exists(folder_path) and os.path.isdir(folder_path):
+            shutil.rmtree(folder_path)
+            flash(f'Folder "{safe_sub_folder}" deleted successfully.', 'success')
+            log_activity(f"Gallery folder deleted: '{safe_main_folder}/{safe_sub_folder}'")
+            main_folder_path = os.path.dirname(folder_path)
+            if not os.listdir(main_folder_path):
+                try: os.rmdir(main_folder_path); flash(f'Removed empty folder "{safe_main_folder}".', 'info')
+                except OSError as e: print(f"Could not remove dir {main_folder_path}: {e}")
+        else:
+            flash('Folder not found.', 'warning')
+    except Exception as e:
+        flash(f'Error deleting folder: {e}', 'danger'); print(f"Delete folder error: {e}")
+    return redirect(url_for('admin_gallery'))
+
 @app.route('/admin/prayers')
 @admin_required
 def admin_prayers():
     try: reqs = PrayerRequest.query.order_by(PrayerRequest.is_answered.asc(), PrayerRequest.submitted_at.desc()).all()
     except Exception as e: reqs = []; flash(f'Error: {e}', 'danger'); print(f"Admin Prayers error: {e}")
     return render_template('admin/prayers.html', requests=reqs)
+
+# === PUTHU ROUTE (Prayer-a Notice-a Maathurathu) ===
+@app.route('/admin/prayers/to_notice/<int:id>')
+@admin_required
+def prayer_to_notice(id):
+    req = PrayerRequest.query.get_or_404(id)
+    try:
+        # Puthu notice create pannurom
+        notice_message = f"Prayer Request: Please pray for {req.name}. ({req.message[:50]}...)" # Message-a short-a podurom
+        new_notice = Notice(message=notice_message, is_active=True)
+        db.session.add(new_notice)
+        db.session.commit()
+        flash('Prayer request added to home page notices!', 'success')
+        log_activity(f"Prayer request from '{req.name}' added to notices.")
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error adding prayer to notice: {e}', 'danger')
+        print(f"Prayer to notice error: {e}")
+    return redirect(url_for('admin_prayers'))
+# ==================================================
 
 @app.route('/admin/prayers/toggle_answered/<int:id>')
 @admin_required
@@ -740,6 +794,8 @@ def admin_donations():
     except Exception as e: donations = []; flash(f'Error: {e}', 'danger'); print(f"Admin Donations load error: {e}")
     return render_template('admin/donations.html', donations=donations)
 
+# === VIDEO ROUTES DELETE PANNITOM ===
+
 # --- Database Initialization Command ---
 @app.cli.command('init-db')
 def init_db_command():
@@ -753,6 +809,7 @@ def init_db_command():
         if db_exists:
             try:
                 inspector = db.inspect(db.engine)
+                # === 'video_clip' TABLE-A DELETE PANNITOM ===
                 required_tables = {'user', 'member', 'event', 'sermon', 'prayer_request', 'notice', 'activity_log', 'weekly_service', 'donation'}
                 existing_tables = set(inspector.get_table_names())
                 if not required_tables.issubset(existing_tables):
@@ -775,7 +832,7 @@ def init_db_command():
 
         upload_folder = app.config['UPLOAD_FOLDER']
         if not os.path.exists(upload_folder):
-            try: os.makedirs(upload_folder, exist_ok=True); print(f"Created gallery folder: {upload_folder}") # Added exist_ok=True
+            try: os.makedirs(upload_folder, exist_ok=True); print(f"Created gallery folder: {upload_folder}")
             except OSError as e: print(f"Error creating gallery folder: {e}")
 
         if not User.query.filter_by(username='admin').first():
@@ -795,8 +852,8 @@ def init_db_command():
 # --- Main Run ---
 if __name__ == '__main__':
     instance_path = os.path.join(app.root_path, '..', 'instance')
-    if not os.path.exists(instance_path): os.makedirs(instance_path, exist_ok=True) # Added exist_ok=True
-    if not os.path.exists(app.config['UPLOAD_FOLDER']): os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True) # Added exist_ok=True
+    if not os.path.exists(instance_path): os.makedirs(instance_path, exist_ok=True)
+    if not os.path.exists(app.config['UPLOAD_FOLDER']): os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() in ['true', '1', 't']
     print(f"Starting Flask app: http://0.0.0.0:{port}/ | Debug: {debug_mode}")

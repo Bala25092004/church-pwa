@@ -5,17 +5,6 @@
 <div class="container my-5">
     <h1 class="h2 mb-4">Prayer Requests</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
     <div class="card shadow-sm">
         <div class="card-body">
             {% if requests %}
@@ -40,10 +29,15 @@
                     </div>
                     <p class="mb-2">{{ req.message | safe }}</p>
                     <small>
-                         <a href="{{ url_for('toggle_prayer_answered', id=req.id) }}" class="btn btn-sm {% if req.is_answered %}btn-outline-secondary{% else %}btn-outline-success{% endif %}">
+                         <a href="{{ url_for('toggle_prayer_answered', id=req.id) }}" class="btn btn-sm {% if req.is_answered %}btn-outline-secondary{% else %}btn-outline-success{% endif %} me-2">
+                             <i class="bi {% if req.is_answered %}bi-check-circle-fill{% else %}bi-check-circle{% endif %} me-1"></i>
                              Mark as {% if req.is_answered %}Unanswered{% else %}Answered{% endif %}
                          </a>
-                    </small>
+                         <a href="{{ url_for('prayer_to_notice', id=req.id) }}" class="btn btn-sm btn-outline-info" 
+                            onclick="return confirm('Add this prayer request to the public home page notices?')">
+                             <i class="bi bi-megaphone-fill me-1"></i> Add to Notices
+                         </a>
+                         </small>
                 </div>
                 {% endfor %}
             </div>

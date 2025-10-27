@@ -3,158 +3,62 @@
 
 {% block content %}
 <style>
-    /* --- PUTHU, Luxury Theme Styles for Gallery --- */
+    /* Intha file-la style theva illa, ellam style.css-la irunthu varum */
     
-    /* Import fonts (ithu ingayum theva) */
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap');
-    
-    :root {
-        /* Colors (ithu style.css-la irunthu varum, aana ingayum define pannikalam) */
-        --font-heading: 'Playfair Display', serif;
-        --font-body: 'Roboto', sans-serif;
-        --color-primary-light: #5B86E5;
-        --color-primary-dark: #36D1DC;
-        --color-text-dark: #2c3e50;
-        --color-text-muted: #6c757d;
-        --color-white: #ffffff;
-        --color-border-dark: #e0e0e0;
-        --color-bg-light: #f8f9fa;
-        --color-secondary: #d4af37;
+    /* Puthu video section-ku style */
+    .video-gallery-section {
+        margin-top: 4rem; /* Image gallery-kum video gallery-kum space */
+        padding-top: 2.5rem;
+        border-top: 1px solid var(--color-border-dark);
     }
-
-    .gallery-header {
-        text-align: center;
-        margin-bottom: 3.5rem;
+    .video-card {
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        overflow: hidden; /* Iframe-a sariya vekka */
     }
-    .gallery-header h1 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 3rem;
+    .video-card .card-title {
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 1.1rem;
         color: var(--color-text-dark);
     }
-    .gallery-header p {
-        font-size: 1.15rem;
-        color: var(--color-text-muted);
+    .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+        overflow: hidden;
     }
-
-    .gallery-accordion .accordion-item {
-        margin-bottom: 1.5rem; border: none; border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08); overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    .gallery-accordion .accordion-item:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
-    .gallery-accordion .accordion-button {
-        font-family: var(--font-heading);
-        font-size: 1.5rem; font-weight: 700; color: var(--color-text-dark);
-        background-color: var(--color-white); border-bottom: 1px solid var(--color-border-dark);
-        padding: 1.25rem 1.75rem;
-    }
-    .gallery-accordion .accordion-button:not(.collapsed) {
-        background: linear-gradient(135deg, #A7BFE8 0%, #6190E8 100%);
-        color: var(--color-white); box-shadow: none; border-bottom: none;
-    }
-    .gallery-accordion .accordion-button:not(.collapsed)::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708 .708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        transform: rotate(-180deg);
-    }
-    .gallery-accordion .accordion-button:focus { box-shadow: none; }
-    .gallery-accordion .accordion-button::after {
-         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230d6efd'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708 .708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3C/svg%3E");
-         transition: transform 0.3s ease;
-    }
-    .gallery-accordion .accordion-body { background-color: var(--color-bg-light); padding: 1.5rem; }
-    .gallery-accordion .accordion-body .accordion-item { border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .gallery-accordion .accordion-body .accordion-button {
-        font-family: var(--font-body); font-size: 1.1rem; font-weight: 600;
-        background-color: #fdfdfd; color: var(--color-text-dark); padding: 1rem 1.25rem;
-    }
-     .gallery-accordion .accordion-body .accordion-button:not(.collapsed) {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f0f4f8 100%);
-        color: var(--color-primary-light);
-    }
-    .gallery-accordion .accordion-body .accordion-body { background-color: var(--color-white); }
-    .gallery-card {
-        overflow: hidden; border: none; border-radius: 15px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;
-    }
-    .gallery-card:hover { transform: scale(1.05); }
-    .gallery-img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
-    
-    /* --- Full-Screen Glassmorphism Modal Styles --- */
-    .full-glass-modal .modal-dialog {
-        max-width: 100vw; height: 100vh; margin: 0;
-        display: flex; align-items: center; justify-content: center;
-        padding: 1.5rem;
-    }
-    .full-glass-modal .modal-content {
-        background: linear-gradient(135deg, 
-                    rgba(255, 100, 255, 0.2) 0%, /* Bright Pink */
-                    rgba(100, 100, 255, 0.2) 50%, /* Blue */
-                    rgba(100, 255, 100, 0.2) 100% /* Green */
-                );
-        backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-        border-radius: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        width: 100%; height: 100%; display: flex; flex-direction: column;
-    }
-    .full-glass-modal .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
-        border-top-left-radius: 23px; border-top-right-radius: 23px; padding: 1.2rem 1.8rem;
-    }
-    .full-glass-modal .modal-title {
-        color: var(--color-white); text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-        font-family: var(--font-heading); font-weight: 700; font-size: 2rem;
-    }
-    .full-glass-modal .btn-close { filter: invert(1) brightness(2); font-size: 1.8rem; opacity: 0.9; }
-    .full-glass-modal .btn-close:hover { opacity: 1; transform: scale(1.15); }
-    .full-glass-modal .modal-body {
-        padding: 2rem; display: flex; align-items: center;
-        justify-content: center; flex-grow: 1;
-    }
-    .full-glass-modal .modal-body img { 
-        max-width: 100%; max-height: 100%;
-        object-fit: contain; border-radius: 18px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.25); margin: auto;
-    }
-    
-    @media (max-width: 768px) {
-        .gallery-header h1 { font-size: 2.2rem; }
-        .gallery-header p { font-size: 1rem; }
-        .gallery-accordion .accordion-button { font-size: 1.2rem; padding: 1rem 1.25rem; }
-        .gallery-accordion .accordion-body .accordion-button { font-size: 1rem; padding: 0.8rem 1rem; }
-        .gallery-img { height: 180px; }
-        .full-glass-modal .modal-dialog { padding: 0.5rem; }
-        .full-glass-modal .modal-title { font-size: 1.4rem; }
-        .full-glass-modal .btn-close { font-size: 1.2rem; }
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 </style>
 
 <div class="container my-5">
     
     <div class="gallery-header fade-in">
-        <h1 class="display-4">Gallery</h1>
+        <h1 class="display-4">Image Gallery</h1>
         <p class="lead text-muted">Moments and memories from our church life.</p>
     </div>
 
     {% if gallery_data %}
         <div class="accordion gallery-accordion" id="galleryAccordionRoot">
-
             {% for main_folder_group in gallery_data %}
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-{{ main_folder_group.main_folder }}">
                     <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" 
                             data-bs-target="#collapse-{{ main_folder_group.main_folder }}" aria-expanded="{{ 'true' if loop.first else 'false' }}" 
                             aria-controls="collapse-{{ main_folder_group.main_folder }}">
-                        <i class="bi bi-folder-fill me-2" style="color: var(--color-primary);"></i> {# Gold Folder Icon maathiruken #}
+                        <i class="bi bi-folder-fill me-2" style="color: var(--color-primary);"></i>
                         {{ main_folder_group.main_folder | replace('_', ' ') | title }}
                     </button>
                 </h2>
                 <div id="collapse-{{ main_folder_group.main_folder }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" 
                      aria-labelledby="heading-{{ main_folder_group.main_folder }}" data-bs-parent="#galleryAccordionRoot">
                     <div class="accordion-body">
-                        
                         <div class="accordion" id="subAccordion-{{ main_folder_group.main_folder }}">
                             {% for event in main_folder_group.events %}
                             <div class="accordion-item border-0 mb-2">
@@ -169,19 +73,16 @@
                                 <div id="collapse-event-{{ main_folder_group.main_folder }}-{{ event.event_name }}" class="accordion-collapse collapse" 
                                      aria-labelledby="heading-event-{{ event.event_name }}" data-bs-parent="#subAccordion-{{ main_folder_group.main_folder }}">
                                     <div class="accordion-body">
-                                        
                                         <div class="row g-3">
                                             {% for image in event.images %}
                                             <div class="col-lg-3 col-md-4 col-sm-6">
                                                 <div class="card gallery-card">
                                                     <img src="{{ url_for('static', filename='images/gallery/' + main_folder_group.main_folder + '/' + event.event_name + '/' + image) }}" 
-                                                         alt="{{ event.event_name }} - {{ image }}" 
-                                                         class="gallery-img"
+                                                         alt="{{ event.event_name }} - {{ image }}" class="gallery-img"
                                                          data-bs-toggle="modal" 
                                                          data-bs-target="#imgModal-{{ main_folder_group.main_folder }}-{{ event.event_name }}-{{ loop.index }}">
                                                 </div>
                                             </div>
-
                                             <div class="modal fade full-glass-modal" id="imgModal-{{ main_folder_group.main_folder }}-{{ event.event_name }}-{{ loop.index }}" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
@@ -204,21 +105,43 @@
                             </div>
                             {% endfor %}
                         </div>
-                        
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-
-    {% else %}
+    {% elif not video_clips %} {# Image-um illa, video-vum illaina thaan itha kaattanum #}
         <div class="col-12">
             <div class="alert alert-info text-center" role="alert">
-                <h4 class="alert-heading">No Images Yet</h4>
-                <p>The gallery is currently empty. Photos uploaded by the admin will appear here.</p>
+                <h4 class="alert-heading">No Images or Videos Yet</h4>
+                <p>The gallery is currently empty.</p>
             </div>
         </div>
     {% endif %}
-        
-</div>
+    
+    {% if video_clips %}
+    <section class="video-gallery-section">
+        <h2 class="gallery-header-title text-center display-6 mb-4">Video Clips</h2>
+        <div class="row g-4">
+            {% for clip in video_clips %}
+            <div class="col-md-6">
+                <div class="card video-card">
+                    <div class="video-wrapper">
+                        <iframe src="{{ clip.embed_url }}" 
+                                title="{{ clip.title }}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ clip.title }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    </div>
 {% endblock %}

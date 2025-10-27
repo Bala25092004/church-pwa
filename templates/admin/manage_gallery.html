@@ -11,7 +11,6 @@
         </div>
         <div class="card-body">
             <form action="{{ url_for('upload_gallery_image') }}" method="POST" enctype="multipart/form-data">
-                
                 <div class="row g-3">
                     <div class="col-md-6 mb-3">
                         <label for="main_folder" class="form-label">Main Folder (e.g., Year) <span class="text-danger">*</span></label>
@@ -25,7 +24,6 @@
                     </div>
                 </div>
                 <hr>
-                
                 <div class="mb-3">
                     <label for="photos" class="form-label">Select Images to Upload <span class="text-danger">*</span></label>
                     <input class="form-control" type="file" id="photos" name="photos" multiple required>
@@ -47,7 +45,14 @@
             
             {% for event in main_folder_group.events %}
             <div class="mb-3 p-3 border rounded bg-white">
-                <h5 class="h6 mb-3 text-muted">{{ event.event_name | replace('_', ' ') | title }}</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="h6 mb-0 text-muted">{{ event.event_name | replace('_', ' ') | title }}</h5>
+                    <a href="{{ url_for('delete_gallery_folder', main_folder=main_folder_group.main_folder, sub_folder=event.event_name) }}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('WARNING: Are you sure you want to delete the ENTIRE folder \'{{ event.event_name }}\' and all images inside it?')">
+                        <i class="bi bi-trash-fill me-1"></i> Delete All
+                    </a>
+                    </div>
                 <div class="row g-3">
                     {% for image in event.images %}
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
