@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% block title %}Contact Us - {{ super() }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for the contact page */
+    .page-header-section {
+        background-color: #f0f8ff; /* Alice Blue background */
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+        border-radius: 8px;
+    }
+    .page-header-section h1 {
+        color: #1a5276; /* Darker blue heading */
+        font-weight: 700;
+    }
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        /* Padding-top controls aspect ratio (56.25% for 16:9) */
+        padding-top: 75%; /* Adjust this percentage for a more square-like map if needed */
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-top: 1.5rem; /* Space above map */
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0; /* Remove default iframe border */
+    }
+    .contact-details .list-group-item {
+        border: none; /* Remove borders from list items */
+        padding-left: 0; /* Align text */
+        padding-right: 0;
+    }
+    .contact-details .list-group-item i {
+        color: var(--color-primary); /* Use theme color for icons */
+        width: 24px; /* Ensure icons align */
+        text-align: center;
+        margin-right: 1rem; /* Space between icon and text */
+        font-size: 1.2rem; /* Slightly larger icons */
+    }
+    .contact-details .list-group-item strong {
+        display: block; /* Make label appear above detail */
+        margin-bottom: 0.25rem;
+        color: #343a40; /* Darker text for labels */
+    }
+    .contact-details a {
+        text-decoration: none; /* Remove underline from links */
+        color: #0d6efd; /* Standard link blue */
+    }
+    .contact-details a:hover {
+        text-decoration: underline; /* Underline on hover */
+    }
+</style>
+
+<div class="container my-5">
+
+    <div class="page-header-section text-center fade-in">
+        <h1 class="display-4">Contact Us 📞</h1>
+        <p class="lead text-muted">We'd love to hear from you. Get in touch with us!</p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <h2 class="mb-4">Our Location & Details</h2>
+            <div class="contact-details">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-start mb-3">
+                        <i class="bi bi-geo-alt-fill flex-shrink-0"></i>
+                        <div>
+                            <strong>Address:</strong>
+                            CSI ULAGA RATCHAGAR AALAYAM <br>
+                             Middle Street <br>
+                             Thiruvarangapatti<br>
+                             Srivaikundam (tk)<br>
+                             Tuticorin (district)<br>
+                             Pin : 628622<br>
+                            </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start mb-3">
+                        <i class="bi bi-telephone-fill flex-shrink-0"></i>
+                        <div>
+                            <strong>Phone:</strong>
+                            <a href="tel:+919876543210">+91 73974 26648</a> <br>
+                            </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start mb-3">
+                        <i class="bi bi-envelope-fill flex-shrink-0"></i>
+                        <div>
+                            <strong>Email:</strong>
+                            <a href="mailto:info@csiura.org">csiulagaratchagaraalayam2025@gmail.com</a> <br>
+                            </div>
+                    </li>
+                     <li class="list-group-item d-flex align-items-start mb-3">
+                         <i class="bi bi-clock-fill flex-shrink-0"></i>
+                        <div>
+                            <strong>Opening Time:</strong>
+                            Monday - saturday: 6:00 PM - 8:00 PM <br>
+                            Sunday : 11:00 AM - 2.00 PM<br>
+                                     6.00 PM - 8.00 PM
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <h2 class="mb-3">Find Us on the Map</h2>
+            <div class="map-container"> 
+                "<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15780.063215476372!2d77.86175698041913!3d8.59447815861291!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b04745488870063%3A0x26e8a8430e4cfa45!2sCSI%20World%20Saviour&#39;s%20Church%2C%20Thiruvarangapatti!5e0!3m2!1sen!2sin!4v1761365465687!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"   
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                 </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+{% endblock %}

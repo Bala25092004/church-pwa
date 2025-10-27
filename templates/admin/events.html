@@ -1,0 +1,131 @@
+{% extends "admin/admin_layout.html" %} {# Correct layout path #}
+{% block title %}Manage Events{% endblock %}
+
+{% block admin_content %} {# Correct block name #}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Manage Church Events</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
+            <i class="bi bi-plus-circle-fill me-2"></i> Add New Event
+        </button>
+    </div>
+
+    {% include '_flash_messages.html' ignore missing %} {# Include flash messages cleanly #}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Date & Time</th>
+                            <th scope="col">Location</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td><strong>{{ event.title }}</strong></td>
+                            <td>{{ event.date.strftime('%a, %b %d, %Y at %I:%M %p') }}</td> {# Shortened day name #}
+                            <td>{{ event.location }}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#editEventModal{{ event.id }}">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </button>
+                                <a href="{{ url_for('delete_event', id=event.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete \'{{ event.title }}\'?')">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No events found. Add one to get started!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> {# Larger modal #}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_event') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="add-title" class="form-label">Event Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add-title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="add-description" name="description" rows="4"></textarea> {# Removed required for flexibility #}
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="add-date" class="form-label">Date and Time <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="add-date" name="date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="add-location" name="location" value="Church Auditorium">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for event in events %}
+<div class="modal fade" id="editEventModal{{ event.id }}" tabindex="-1" aria-labelledby="editEventModalLabel{{ event.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> {# Larger modal #}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel{{ event.id }}">Edit Event: {{ event.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('edit_event', id=event.id) }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit-title-{{ event.id }}" class="form-label">Event Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-title-{{ event.id }}" name="title" value="{{ event.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-description-{{ event.id }}" class="form-label">Description</label>
+                        <textarea class="form-control" id="edit-description-{{ event.id }}" name="description" rows="4">{{ event.description }}</textarea> {# Removed required #}
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-date-{{ event.id }}" class="form-label">Date and Time <span class="text-danger">*</span></label>
+                            {# Format datetime correctly for the input value #}
+                            <input type="datetime-local" class="form-control" id="edit-date-{{ event.id }}" name="date" value="{{ event.date.strftime('%Y-%m-%dT%H:%M') if event.date else '' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-location-{{ event.id }}" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="edit-location-{{ event.id }}" name="location" value="{{ event.location }}">
+                        </div>
+                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock admin_content %} {# Correct block end tag #}

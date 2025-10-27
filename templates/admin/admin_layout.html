@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - CSI URA Church</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* --- Google Font Import (for admin) --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: #f8f9fa; /* Light grey background */
+            font-family: 'Roboto', sans-serif; /* Cleaner font for admin */
+        }
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background-color: #212529; /* Darker sidebar */
+            padding-top: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .sidebar .nav-link:hover {
+            color: #ffffff;
+            background-color: #495057;
+            border-left-color: #FFC107; /* Gold accent */
+        }
+        .sidebar .nav-link.active {
+            color: #ffffff;
+            background-color: #0d6efd;
+            border-left-color: #FFC107;
+            font-weight: 500;
+        }
+        .sidebar .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .sidebar-header {
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-bottom: 1px solid #495057;
+        }
+        .sidebar .sidebar-menu {
+             flex-grow: 1;
+             overflow-y: auto;
+        }
+        .sidebar .logout-section {
+             padding: 1rem 1.5rem;
+             margin-top: auto;
+             border-top: 1px solid #495057;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2.5rem;
+            flex-grow: 1;
+            width: calc(100% - 250px);
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+        .modal-content {
+             border-radius: 12px;
+             border: none;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            body {
+                 flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                min-height: auto;
+                z-index: auto;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem 1rem;
+                width: 100%;
+            }
+            .sidebar .logout-section {
+                 position: relative;
+                 margin-top: 1rem;
+                 border-top: none;
+            }
+        }
+    </style>
+    </head>
+<body>
+    <div class="d-flex flex-column flex-md-row">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <span><i class="bi bi-shield-lock-fill me-2"></i>Admin Panel</span>
+            </div>
+             <ul class="nav flex-column sidebar-menu">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+                        <i class="bi bi-house-door-fill"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_members' %}active{% endif %}" href="{{ url_for('admin_members') }}">
+                        <i class="bi bi-people-fill"></i> Manage Members
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_events' %}active{% endif %}" href="{{ url_for('admin_events') }}">
+                        <i class="bi bi-calendar-event-fill"></i> Manage Events
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_weekly_services' %}active{% endif %}" href="{{ url_for('admin_weekly_services') }}">
+                        <i class="bi bi-clock-fill"></i> Weekly Services
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_sermons' %}active{% endif %}" href="{{ url_for('admin_sermons') }}">
+                        <i class="bi bi-book-fill"></i> Manage Sermons
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_gallery' %}active{% endif %}" href="{{ url_for('admin_gallery') }}">
+                         <i class="bi bi-images"></i> Manage Gallery
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_prayers' %}active{% endif %}" href="{{ url_for('admin_prayers') }}">
+                         <i class="bi bi-envelope-heart-fill"></i> Prayer Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_notices' %}active{% endif %}" href="{{ url_for('admin_notices') }}">
+                         <i class="bi bi-megaphone-fill"></i> Manage Notices
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin_donations' %}active{% endif %}" href="{{ url_for('admin_donations') }}">
+                         <i class="bi bi-cash-coin"></i> Donation Records
+                    </a>
+                </li>
+                <li class="nav-item mt-3 border-top pt-3">
+                    <a class="nav-link text-warning" href="{{ url_for('send_birthday_wishes') }}" onclick="return confirm('Send birthday wishes to members celebrating today?')">
+                        <i class="bi bi-gift-fill"></i> Send Birthday Wishes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="{{ url_for('send_marriage_wishes') }}" onclick="return confirm('Send marriage anniversary wishes to members celebrating today?')">
+                        <i class="bi bi-heart-fill"></i> Send Marriage Wishes
+                    </a>
+                </li>
+            </ul>
+            <div class="logout-section">
+                 <a href="{{ url_for('admin_logout') }}" class="btn btn-danger w-100">
+                     <i class="bi bi-box-arrow-right me-2"></i> Logout
+                 </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+             {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

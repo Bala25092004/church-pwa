@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block title %}Prayer Request - {{ super() }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for the prayer request page */
+    .prayer-form-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        background-color: #ffffff; /* White card background */
+    }
+    .prayer-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .prayer-header h1 {
+        font-weight: 700;
+        color: #134074; /* Dark blue heading */
+    }
+    .prayer-header p {
+        color: #6c757d; /* Gray text for quote */
+    }
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+    }
+    .btn-submit-prayer {
+        background-color: var(--color-secondary); /* Gold button */
+        border-color: var(--color-secondary);
+        color: #333;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-submit-prayer:hover {
+        background-color: #e6c300; /* Darker gold on hover */
+        border-color: #e6c300;
+    }
+</style>
+
+<div class="container my-5 fade-in">
+
+    <div class="prayer-header">
+        <h1 class="display-4">Prayer Request 🙏</h1>
+        <p class="lead">"Do not be anxious about anything, but in everything by prayer and supplication with thanksgiving let your requests be made known to God." <br><em>- Philippians 4:6</em></p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card prayer-form-card">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="card-title text-center mb-4">Share Your Prayer Need</h3>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show text-center" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form action="{{ url_for('prayer') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address (Optional)</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email (optional)">
+                            <div class="form-text">We respect your privacy. Your email will not be shared.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="form-label">Your Prayer Request <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" rows="6" placeholder="Please share your prayer request here..." required></textarea>
+                        </div>
+                        <div class="d-grid">
+                           <button type="submit" class="btn btn-submit-prayer btn-lg">
+                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send-fill me-2" viewBox="0 0 16 16">
+                                 <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.001.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                               </svg> Submit Prayer Request
+                           </button>
+                        </div>
+                    </form>
+                </div> </div> </div> </div> </div> {% endblock %}

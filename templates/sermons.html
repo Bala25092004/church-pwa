@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block title %}Sermons - {{ super() }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for the sermon cards */
+    .sermon-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden; /* Ensures iframe corners are rounded */
+    }
+
+    .sermon-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-title {
+        color: #134074; /* Dark blue from your login page */
+        font-weight: 600;
+    }
+
+    .card-iframe-wrapper {
+        /* This maintains the 16:9 aspect ratio for videos */
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    }
+
+    .card-iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
+
+<div class="container my-5">
+    
+    <div class="text-center mb-5 fade-in">
+        <h1 class="display-4">Sermons</h1>
+        <p class="lead text-muted">Listen and watch messages from our church.</p>
+    </div>
+
+    <div class="row g-4">
+        
+        {% for sermon in sermons %}
+        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+            <div class="card sermon-card h-100 w-100">
+                
+                <div class="card-iframe-wrapper">
+                    <iframe 
+                        src="{{ sermon.youtube_embed_url }}" 
+                        title="{{ sermon.title }}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ sermon.title }}</h5>
+                    <p class="card-text text-muted mb-2">
+                        <strong>Preacher:</strong> {{ sermon.preacher }}
+                    </p>
+                    <small class="text-muted mt-auto">
+                        Preached on: {{ sermon.date.strftime('%B %d, %Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                <h4 class="alert-heading">No Sermons Yet</h4>
+                <p>There are no sermons uploaded at this time. Please check back soon!</p>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div> </div> {% endblock %}

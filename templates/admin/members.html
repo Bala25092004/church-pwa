@@ -1,0 +1,172 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Manage Members{% endblock %}
+
+{% block admin_content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Manage Church Members</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+            <i class="bi bi-person-plus-fill me-2"></i> Add New Member
+        </button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">DoB</th>
+                            <th scope="col">Marriage Date</th>
+                            <th scope="col">Baptism</th>
+                            <th scope="col">Confirmation</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td><strong>{{ member.name }}</strong></td>
+                            <td>{{ member.email }}</td>
+                            <td>{{ member.phone if member.phone else '-' }}</td>
+                            <td><span class="badge bg-secondary">{{ member.role }}</span></td>
+                            <td>{{ member.dob.strftime('%b %d, %Y') if member.dob else '-' }}</td>
+                            <td>{{ member.marriage_date.strftime('%b %d, %Y') if member.marriage_date else '-' }}</td>
+                            <td>{{ member.Baptism_date.strftime('%b %d, %Y') if member.Baptism_date else '-' }}</td>
+                            <td>{{ member.Confirmation_date.strftime('%b %d, %Y') if member.Confirmation_date else '-' }}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#editMemberModal{{ member.id }}">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </button>
+                                <a href="{{ url_for('delete_member', id=member.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete member \'{{ member.name }}\'?')">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">No members found. Add one!</td> {# Colspan = 9 #}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_member') }}" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="add-name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add-name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="add-email" name="email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="add-phone" name="phone" placeholder="Optional">
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="add-role" class="form-label">Role</label>
+                            <input type="text" class="form-control" id="add-role" name="role" value="Member">
+                        </div>
+                        <hr>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-dob" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="add-dob" name="dob">
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="add-marriage_date" class="form-label">Marriage Date</label>
+                            <input type="date" class="form-control" id="add-marriage_date" name="marriage_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-Baptism_date" class="form-label">Baptism (ஞானஸ்நானம்) Date</label>
+                            <input type="date" class="form-control" id="add-Baptism_date" name="Baptism_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add-Confirmation_date" class="form-label">Confirmation (திடப்படுத்தல்) Date</label>
+                            <input type="date" class="form-control" id="add-Confirmation_date" name="Confirmation_date">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for member in members %}
+<div class="modal fade" id="editMemberModal{{ member.id }}" tabindex="-1" aria-labelledby="editMemberModalLabel{{ member.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMemberModalLabel{{ member.id }}">Edit {{ member.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('edit_member', id=member.id) }}" method="POST">
+                <div class="modal-body">
+                     <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-name-{{ member.id }}" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit-name-{{ member.id }}" name="name" value="{{ member.name }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-email-{{ member.id }}" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="edit-email-{{ member.id }}" name="email" value="{{ member.email }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-phone-{{ member.id }}" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="edit-phone-{{ member.id }}" name="phone" value="{{ member.phone if member.phone else '' }}">
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="edit-role-{{ member.id }}" class="form-label">Role</label>
+                            <input type="text" class="form-control" id="edit-role-{{ member.id }}" name="role" value="{{ member.role }}">
+                        </div>
+                        <hr>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-dob-{{ member.id }}" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="edit-dob-{{ member.id }}" name="dob" value="{{ member.dob.strftime('%Y-%m-%d') if member.dob else '' }}">
+                        </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="edit-marriage_date-{{ member.id }}" class="form-label">Marriage Date</label>
+                            <input type="date" class="form-control" id="edit-marriage_date-{{ member.id }}" name="marriage_date" value="{{ member.marriage_date.strftime('%Y-%m-%d') if member.marriage_date else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-Baptism_date-{{ member.id }}" class="form-label">Baptism (ஞானஸ்நானம்) Date</label>
+                            <input type="date" class="form-control" id="edit-Baptism_date-{{ member.id }}" name="Baptism_date" value="{{ member.Baptism_date.strftime('%Y-%m-%d') if member.Baptism_date else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit-Confirmation_date-{{ member.id }}" class="form-label">Confirmation (திடப்படுத்தல்) Date</label>
+                            <input type="date" class="form-control" id="edit-Confirmation_date-{{ member.id }}" name="Confirmation_date" value="{{ member.Confirmation_date.strftime('%Y-%m-%d') if member.Confirmation_date else '' }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock admin_content %}

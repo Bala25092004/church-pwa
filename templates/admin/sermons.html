@@ -1,0 +1,120 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Manage Sermons{% endblock %}
+
+{% block admin_content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Manage Sermons</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSermonModal">
+            📖 Add New Sermon
+        </button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Preacher</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sermon in sermons %}
+                        <tr>
+                            <td><strong>{{ sermon.title }}</strong></td>
+                            <td>{{ sermon.preacher }}</td>
+                            <td>{{ sermon.date.strftime('%Y-%m-%d') }}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editSermonModal{{ sermon.id }}">Edit</button>
+                                <a href="{{ url_for('delete_sermon', id=sermon.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this sermon?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No sermons found. Add one to get started!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addSermonModal" tabindex="-1" aria-labelledby="addSermonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSermonModalLabel">Add New Sermon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_sermon') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Sermon Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="preacher" class="form-label">Preacher</label>
+                        <input type="text" class="form-control" name="preacher" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" required>
+                    </div>
+                     <div class="mb-3">
+                        <label for="youtube_embed_url" class="form-label">YouTube Embed URL</label>
+                        <input type="url" class="form-control" name="youtube_embed_url" placeholder="https://www.youtube.com/embed/VIDEO_ID" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Sermon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for sermon in sermons %}
+<div class="modal fade" id="editSermonModal{{ sermon.id }}" tabindex="-1" aria-labelledby="editSermonModalLabel{{ sermon.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSermonModalLabel{{ sermon.id }}">Edit Sermon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('edit_sermon', id=sermon.id) }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sermon Title</label>
+                        <input type="text" class="form-control" name="title" value="{{ sermon.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Preacher</label>
+                        <input type="text" class="form-control" name="preacher" value="{{ sermon.preacher }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" value="{{ sermon.date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label">YouTube Embed URL</label>
+                        <input type="text" class="form-control" name="youtube_embed_url" value="{{ sermon.youtube_embed_url }}" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Sermon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock admin_content %}

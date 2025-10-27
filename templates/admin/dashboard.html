@@ -1,0 +1,161 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block admin_content %} {# <- Content inga thodanganum #}
+<style>
+    /* Custom styles for the admin dashboard */
+    /* Remove body background-color as it's in admin_layout */
+    .dashboard-header {
+        padding: 2rem 0;
+        /* Use a variable or a specific color if needed, --color-dark might not be defined here */
+        /* background-color: var(--color-dark); */
+        background-color: #343a40; /* Direct dark color */
+        /* color: var(--color-light); */
+        color: #ffffff; /* Direct light color */
+        margin-bottom: 2rem;
+        border-radius: 8px; /* Optional: Rounded corners */
+    }
+    .stat-card {
+        border: none;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        background-color: #fff; /* Ensure card background */
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        color: inherit;
+    }
+    .stat-card .card-body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .stat-card .stat-icon {
+        font-size: 3rem;
+        opacity: 0.5;
+    }
+    .stat-card .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    .stat-card .card-title {
+        font-weight: 500;
+        color: #6c757d;
+    }
+    .quick-links .btn {
+        width: 100%;
+        margin-bottom: 0.75rem; /* Increased spacing */
+        padding: 0.85rem; /* Slightly larger buttons */
+        font-size: 1rem;
+    }
+    .quick-links-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="dashboard-header text-center">
+    <div class="container">
+        <h1 class="display-5">Admin Dashboard</h1>
+        <p class="lead">Manage your church's content and community.</p>
+    </div>
+</div>
+
+<div class="container mt-4"> {# Added top margin #}
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-md-6">
+             <a href="{{ url_for('admin_members') }}" class="stat-card bg-primary-subtle text-decoration-none"> {# Added link #}
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-title">Total Members</h5>
+                        <div class="stat-number">{{ member_count }}</div>
+                    </div>
+                    <div class="stat-icon">👥</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <a href="{{ url_for('admin_events') }}" class="stat-card bg-info-subtle text-decoration-none">
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-title">Upcoming Events</h5>
+                        <div class="stat-number">{{ event_count }}</div>
+                    </div>
+                    <div class="stat-icon">🗓️</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+             <a href="{{ url_for('admin_sermons') }}" class="stat-card bg-warning-subtle text-decoration-none"> {# Added link #}
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-title">Total Sermons</h5>
+                        <div class="stat-number">{{ sermon_count }}</div>
+                    </div>
+                    <div class="stat-icon">📖</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+             <a href="{{ url_for('admin_prayers') }}" class="stat-card bg-danger-subtle text-decoration-none"> {# Added link #}
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-title">Pending Prayers</h5>
+                        <div class="stat-number">{{ prayer_count }}</div>
+                    </div>
+                    <div class="stat-icon">🙏</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10"> {# Slightly wider column #}
+            <div class="card quick-links-card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Quick Actions</h4>
+                </div>
+                <div class="card-body p-4">
+                     <div class="row quick-links g-3"> {# Removed duplicate row div #}
+                         <div class="col-lg-4 col-md-6">
+                             <a href="{{ url_for('admin_events') }}" class="btn btn-lg btn-outline-primary">
+                                <i class="bi bi-calendar-event me-2"></i> Manage Events
+                             </a>
+                         </div>
+                         <div class="col-lg-4 col-md-6">
+                             <a href="{{ url_for('admin_sermons') }}" class="btn btn-lg btn-outline-secondary">
+                                <i class="bi bi-book me-2"></i> Manage Sermons
+                             </a>
+                         </div>
+                         <div class="col-lg-4 col-md-6">
+                              <a href="{{ url_for('admin_members') }}" class="btn btn-lg btn-outline-success">
+                                <i class="bi bi-people me-2"></i> Manage Members
+                              </a>
+                         </div>
+                         <div class="col-lg-4 col-md-6">
+                              <a href="{{ url_for('admin_gallery') }}" class="btn btn-lg btn-outline-info">
+                                <i class="bi bi-images me-2"></i> Manage Gallery
+                              </a>
+                         </div>
+                         <div class="col-lg-4 col-md-6">
+                             <a href="{{ url_for('admin_prayers') }}" class="btn btn-lg btn-outline-warning">
+                                <i class="bi bi-envelope-heart me-2"></i> View Prayers
+                             </a>
+                         </div>
+                         </div>
+                </div>
+                 </div>
+        </div>
+    </div>
+</div>
+
+{% endblock admin_content %} {# <- Content inga mudiyum #}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - CSI Ulaga Ratchagar Aalayam</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bg-container {
+            /* CSI-ku porunthamaana Deep Blue color background */
+            background-color: #0d2c54; /* Deep Blue */
+            background-image: linear-gradient(145deg, #0d2c54, #134074); /* Chinna gradient effect */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            background: #ffffff;
+            border-radius: 16px;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .login-card h2 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #134074; /* Dark Blue Text */
+        }
+
+        .logo-img {
+            width: 250px; /* Logo size */
+            height: 250px;
+            border-radius: 0%;
+            object-fit:cover;
+            margin-bottom: 0cap;
+            border: 0cap solid #FFD700; /* Gold border */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-control {
+            background-color: #f1f5f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .form-control:focus {
+            background-color: white;
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+
+        .btn-login {
+            background-color: #FFD700; /* Gold */
+            border: none;
+            color: #333;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        .quote-text {
+            font-style: italic;
+            color: #8a1cf1; /* Color konjam dark aakkiruken */
+            margin-bottom: 2.5rem; 
+            font-size: 2rem; /* Font size perusaakkiruken */
+            font-weight: 500; /* Konjam bold aakkiruken */
+        }
+        
+        .btn-login:hover {
+            background-color: #e6c300;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="bg-container">
+        <div class="login-card">
+            
+            <h2>Admin Login</h2>
+    <img src="/static/images/logo.jpg" alt="Church Logo" class="logo-img">
+              <h1 class="quote-text">"That They All May Be On"</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert alert-danger" role="alert">
+                    {% for category, message in messages %}
+                       {{ message }}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('admin_login') }}" class="text-start">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-login">Login</button>
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+{% extends "layout.html" %}
+{% block title %}Home - CSI Ulaga Ratchagar Aalayam{% endblock %}
+
+{% block content %}
+<style>
+    /* --- Google Font Import --- */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@700&display=swap');
+
+    /* --- Luxury Gradient Color Theme --- */
+    :root {
+        --font-heading: 'Playfair Display', serif;
+        --font-body: 'Roboto', sans-serif;
+        --color-primary-light: #5B86E5; --color-primary-dark: #36D1DC;
+        --color-accent-pink: #BB6BDE; --color-accent-orange: #FFAC81;
+        --color-hero-bg: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-dark) 100%);
+        --color-text-dark: #2c3e50; --color-text-light: #f8f9fa;
+        --color-white: #ffffff; --color-border-light: rgba(255, 255, 255, 0.2);
+        --color-border-dark: #e0e0e0;
+        --glass-bg: rgba(255, 255, 255, 0.15); --glass-border: rgba(255, 255, 255, 0.2);
+    }
+    body {
+        font-family: var(--font-body); color: var(--color-text-dark);
+        background: linear-gradient(180deg, #f0f4f8 0%, #e6eff7 100%);
+        display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); font-weight: 700; color: var(--color-text-dark); }
+    .top-navbar {
+        background-color: var(--color-white) !important;
+        border-bottom: 1px solid var(--color-border-dark);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .top-navbar .navbar-brand { font-family: var(--font-heading); font-weight: 700; color: var(--color-text-dark) !important; }
+    .top-navbar .nav-link { color: var(--color-text-dark); font-weight: 500; }
+    .top-navbar .nav-link:hover, .top-navbar .nav-link.active { color: var(--color-primary-light) !important; }
+    .top-navbar .btn-primary { background-image: var(--color-hero-bg); border: none; box-shadow: 0 5px 20px rgba(54, 209, 220, 0.3); }
+    footer { background-color: var(--color-text-dark) !important; color: var(--color-text-light) !important; }
+    .card {
+        border-radius: 20px; border: none; box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        background-color: var(--color-white); transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 45px rgba(0,0,0,0.15); }
+    .hero-split-section {
+        background: linear-gradient(135deg, #A7BFE8 0%, #6190E8 100%);
+        color: var(--color-white); padding: 4rem 0; position: relative; overflow: hidden;
+    }
+    .hero-text-content h1 { font-size: 3.2rem; color: var(--color-white); text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .hero-text-content .lead { color: rgba(255, 255, 255, 0.9); font-size: 1.25rem; font-weight: 300; }
+    .verse-box {
+        background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+        color: var(--color-white); padding: 2rem; border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1); margin-top: 2.5rem;
+    }
+    .verse-box h2 { color: var(--color-accent-orange); text-transform: uppercase; }
+    .verse-box blockquote p { color: var(--color-white); font-size: 1.05rem; }
+    .verse-box blockquote footer { color: rgba(255, 255, 255, 0.8); }
+    .carousel { box-shadow: 0 15px 50px rgba(0,0,0,0.2); border-radius: 20px; overflow: hidden; }
+    .carousel-item img { height: 500px; object-fit: cover; border-radius: 20px; object-position: center 30%; }
+    .btn-gold {
+        background-image: linear-gradient(45deg, #FFD700 0%, #DAA520 100%);
+        border: none; color: #663300; box-shadow: 0 5px 20px rgba(218, 165, 32, 0.4);
+    }
+    .btn-gold:hover { background-image: linear-gradient(45deg, #DAA520 0%, #FFD700 100%); transform: translateY(-4px) scale(1.02); }
+
+    /* === SCROLLING NOTICE STYLE (Marubadiyum Kondu Vanthachu) === */
+    .scrolling-notice-bar {
+        background: linear-gradient(90deg, var(--color-primary-light) 0%, var(--color-primary-dark) 100%); /* Gradient background */
+        color: var(--color-white);
+        border: none;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Stronger shadow */
+        border-radius: 15px; /* More rounded */
+        padding: 1rem 1.5rem; /* More padding */
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        margin-bottom: 2.5rem !important; /* Space below */
+    }
+    .scrolling-notice-bar .icon {
+        font-size: 1.8rem; /* Larger icon */
+        color: var(--color-white); /* White icon */
+        margin-right: 1.2rem;
+        animation: pulse 1.5s infinite ease-in-out; /* Pulsing effect for icon */
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .scrolling-notice-container { flex-grow: 1; overflow: hidden; white-space: nowrap; }
+    .scrolling-notice-content {
+        display: inline-block; padding-left: 100%;
+        animation: scroll-left 40s linear infinite; /* Animation speed */
+    }
+    .notice-item { 
+        display: inline-block; 
+        padding: 0 2rem; /* Space between items */
+        font-weight: 500; 
+        color: var(--color-white);
+        font-size: 1.1rem; /* Larger text */
+    }
+    .notice-separator { 
+        color: rgba(255, 255, 255, 0.7); /* Lighter separator */
+        font-weight: bold; 
+        font-size: 1.2rem; /* Larger separator */
+        margin: 0 0.5rem;
+    }
+    .scrolling-notice-content:hover { animation-play-state: paused; }
+    @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    /* =================================== */
+    
+    /* Alert Boxes (Birthday, Marriage) */
+    .alert { border-radius: 15px; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.1); padding: 1.5rem; }
+    .alert-heading { font-family: var(--font-heading); font-weight: 700; font-size: 1.5rem; }
+    .alert p, .alert li { font-size: 1.05rem; }
+    .alert-warning { background: linear-gradient(45deg, #FFE08C 0%, #FFD54F 100%); color: #a0522d; }
+    .alert-warning .alert-heading { color: #a0522d; }
+    .alert-success { background: linear-gradient(45deg, #A8E6CF 0%, #64D8D2 100%); color: #0f5132; }
+    .alert-success .alert-heading { color: #0f5132; }
+
+    /* Quick Link Cards */
+    .card .card-title { font-size: 1.4rem; }
+    .card .card-text { font-size: 1.05rem; color: var(--color-text-muted); }
+    .card-header { background-color: #f0f4f8 !important; border-bottom: 1px solid #e0e0e0; }
+
+    /* Mobile Adjustments */
+    @media (max-width: 768px) {
+        .hero-text-content { padding-left: 0; margin-top: 2.5rem; text-align: center; }
+        .hero-text-content h1 { font-size: 2.5rem; }
+        .carousel-item img { height: 350px; border-radius: 15px; }
+        .scrolling-notice-bar { padding: 0.8rem 1rem; border-radius: 12px; margin-bottom: 2.5rem !important; }
+        .scrolling-notice-bar .icon { font-size: 1.4rem; margin-right: 0.8rem; }
+        .notice-item { padding: 0 1rem; font-size: 0.95rem; }
+        .notice-separator { font-size: 1rem; margin: 0 0.3rem; }
+        .scrolling-notice-content { animation-duration: 30s; }
+        .alert { padding: 1.2rem; }
+        .alert-heading { font-size: 1.3rem; }
+    }
+</style>
+
+
+<section class="hero-split-section">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-md-7 fade-in">
+                <div id="homeCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="{{ url_for('static', filename='images/a.jpg') }}" class="d-block w-100" alt="Church Pastor">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{{ url_for('static', filename='images/5.jpeg') }}" class="d-block w-100" alt="Church Outside">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{{ url_for('static', filename='images/4.jpeg') }}" class="d-block w-100" alt="Church Inside">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-5 fade-in">
+                <div class="hero-text-content">
+                    <h1 class="mb-3">Welcome to CSI Ulaga Ratchagar Aalayam</h1>
+                    <p class="lead">A place of worship, community, and love.</p>
+                    <div class="verse-box">
+                        <h2>Verse of the Day</h2>
+                        <blockquote class="blockquote mb-0">
+                            <p>"{{ verse.text }}"</p>
+                            <footer class="blockquote-footer">{{ verse.ref }}</footer>
+                        </blockquote>
+                    </div>
+                    <button id="install-btn" class="btn btn-gold mt-4 align-self-start align-self-md-start" style="display: none;">
+                        <i class="bi bi-phone me-1"></i> Install App
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container my-5">
+    
+    
+    {% if birthday_members %}
+    <div class="alert alert-warning shadow-sm mb-5 fade-in" role="alert">
+        <h4 class="alert-heading"><i class="bi bi-gift-fill me-2"></i>Today's Birthdays!</h4>
+        <hr>
+        <p>Let's wish a very happy birthday to:</p>
+        <ul class="list-unstyled">
+            {% for member in birthday_members %}
+                <li><i class="bi bi-cake2-fill me-2"></i><strong>{{ member.name }}</strong></li>
+            {% endfor %}
+        </ul>
+        {% if birthday_verse %}
+            <hr>
+            <p class="blockquote-footer mb-0 mt-2">
+                <small><em>"{{ birthday_verse.text }}" - {{ birthday_verse.ref }}</em></small>
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if marriage_members %}
+    <div class="alert alert-success shadow-sm mb-5 fade-in" role="alert">
+        <h4 class="alert-heading"><i class="bi bi-heart-fill me-2"></i>Today's Marriage Anniversaries!</h4>
+        <hr>
+        <p>Let's wish a very happy anniversary to:</p>
+        <ul class="list-unstyled">
+            {% for member in marriage_members %}
+                <li><i class="bi bi-ring me-2"></i><strong>{{ member.name }}</strong></li>
+            {% endfor %}
+        </ul>
+        {% if marriage_verse %}
+            <hr>
+            <p class="blockquote-footer mb-0 mt-2">
+                <small><em>"{{ marriage_verse.text }}" - {{ marriage_verse.ref }}</em></small>
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if activities %}
+    <div class="card shadow-sm mb-5 fade-in">
+        <div class="card-header bg-light">
+           <h4 class="mb-0 h5"><i class="bi bi-bell-fill me-2 text-primary"></i>Recent Updates</h4>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for activity in activities %}
+            <li class="list-group-item small py-2">
+                {{ activity.message }}
+                <span class="text-muted d-block" style="font-size: 0.8em;"> - {{ activity.timestamp.strftime('%b %d, %Y') }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="row text-center g-4">
+        <div class="col-md-4 fade-in" data-aos-delay="100">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h3 class="h5 card-title mb-3">🕒 Service Times</h3>
+                    <p class="card-text mb-3">View our weekly service schedule.</p>
+                    <a href="{{ url_for('services') }}" class="btn btn-outline-primary btn-sm mt-auto">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in" data-aos-delay="200">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h3 class="h5 card-title mb-3">📖 Recent Sermon</h3>
+                    <p class="card-text mb-3">Listen to the latest message.</p>
+                    <a href="{{ url_for('sermons') }}" class="btn btn-outline-primary btn-sm mt-auto">Watch Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 fade-in" data-aos-delay="300">
+            <div class="card h-100 shadow-sm border-0">
+                 <div class="card-body d-flex flex-column justify-content-center">
+                    <h3 class="h5 card-title mb-3">🙏 Prayer Request</h3>
+                    <p class="card-text mb-3">Let us pray for you.</p>
+                    <a href="{{ url_for('prayer') }}" class="btn btn-outline-primary btn-sm mt-auto">Submit Request</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if birthday_members %}
+<div class="modal fade" id="birthdayModal" tabindex="-1" aria-labelledby="birthdayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header alert-warning"> {# Warning color header #}
+                <h5 class="modal-title" id="birthdayModalLabel"><i class="bi bi-gift-fill me-2"></i>Today's Birthdays!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Let's wish a very happy birthday to:</p>
+                <ul class="list-unstyled">
+                    {% for member in birthday_members %}
+                        <li><i class="bi bi-cake2-fill me-2"></i><strong>{{ member.name }}</strong></li>
+                    {% endfor %}
+                </ul>
+                {% if birthday_verse %}
+                    <hr>
+                    <p class="blockquote-footer mb-0 mt-2">
+                        <small><em>"{{ birthday_verse.text }}" - {{ birthday_verse.ref }}</em></small>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if marriage_members %}
+<div class="modal fade" id="marriageModal" tabindex="-1" aria-labelledby="marriageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header alert-success"> {# Success color header #}
+                <h5 class="modal-title" id="marriageModalLabel"><i class="bi bi-heart-fill me-2"></i>Today's Anniversaries!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Let's wish a very happy marriage anniversary to:</p>
+                <ul class="list-unstyled">
+                    {% for member in marriage_members %}
+                        <li><i class="bi bi-ring me-2"></i><strong>{{ member.name }}</strong></li>
+                    {% endfor %}
+                </ul>
+                {% if marriage_verse %}
+                    <hr>
+                    <p class="blockquote-footer mb-0 mt-2">
+                        <small><em>"{{ marriage_verse.text }}" - {{ marriage_verse.ref }}</em></small>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var birthdayModalEl = document.getElementById('birthdayModal');
+        if (birthdayModalEl) {
+            var birthdayModal = new bootstrap.Modal(birthdayModalEl);
+            birthdayModal.show();
+        }
+
+        var marriageModalEl = document.getElementById('marriageModal');
+        if (marriageModalEl) {
+            var delay = birthdayModalEl ? 3000 : 500; // Show after 3s if birthday modal showed first
+            setTimeout(function() {
+                var marriageModal = new bootstrap.Modal(marriageModalEl);
+                marriageModal.show();
+            }, delay);
+        }
+    });
+</script>
+
+{% endblock %}

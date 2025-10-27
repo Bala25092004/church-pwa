@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block title %}Donate - {{ super() }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Styles apdiye irukkattum */
+    .donate-card { border: none; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); background-color: #ffffff; }
+    .page-header-section { text-align: center; margin-bottom: 3rem; padding: 2.5rem 1.5rem; background-color: #e3f2fd; border-radius: 12px; }
+    .page-header-section h1 { font-weight: 700; color: #0d47a1; }
+    .qr-code-img { max-width: 250px; height: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 5px; background-color: #fff; margin-bottom: 1.5rem; }
+    .bank-details { background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px dashed #ced4da; }
+    .bank-details p { margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .bank-details strong { display: inline-block; min-width: 130px; }
+    .nav-pills .nav-link { color: #0d6efd; border: 1px solid #0d6efd; margin: 0 5px; border-radius: 50rem; }
+    .nav-pills .nav-link.active { color: #fff; background-color: #0d6efd; }
+    .tab-content { padding-top: 2rem; }
+    /* Style for the info submission form */
+    .info-submission-card { margin-top: 2.5rem; border-top: 2px solid #0d6efd; }
+    .info-submission-card .card-header { background-color: #e7f1ff; font-weight: 600; }
+</style>
+
+<div class="container my-5 fade-in">
+
+    <div class="page-header-section">
+        {# ... Header content apdiye irukkattum ... #}
+         <h1 class="display-4">Support Our Ministry ❤️</h1>
+        <p class="lead text-muted">Your generous contribution helps us continue our work, serve the community, and spread the Gospel.</p>
+        <p class="text-muted mt-3"><em>"Each one must give as he has decided in his heart... for God loves a cheerful giver." - 2 Cor 9:7</em></p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card donate-card">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="card-title text-center mb-4">Choose Your Donation Method</h3>
+
+                    <ul class="nav nav-pills justify-content-center mb-4" id="donateTab" role="tablist">
+                         {# ... Tabs apdiye irukkattum ... #}
+                         <li class="nav-item" role="presentation">
+                           <button class="nav-link active" id="gpay-tab" data-bs-toggle="tab" data-bs-target="#gpay-content" type="button" role="tab" aria-controls="gpay-content" aria-selected="true"><i class="bi bi-google me-1"></i> GPay (QR Code)</button>
+                         </li>
+                         <li class="nav-item" role="presentation">
+                           <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank-content" type="button" role="tab" aria-controls="bank-content" aria-selected="false"><i class="bi bi-bank me-1"></i> Bank Transfer</button>
+                         </li>
+                    </ul>
+
+                    <div class="tab-content" id="donateTabContent">
+                        <div class="tab-pane fade show active" id="gpay-content" role="tabpanel" aria-labelledby="gpay-tab">
+                            {# ... QR Code content apdiye irukkattum ... #}
+                             <div class="text-center">
+                               <h4 class="h6 mb-3">Scan the QR Code using Google Pay or other UPI apps:</h4>
+                               <img src="/static/images/gpay-qr-code.jpeg" alt="GPay QR Code" class="qr-code-img img-fluid">
+                               <p class="text-muted small">After scanning, please enter the amount you wish to donate.</p>
+                             </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="bank-content" role="tabpanel" aria-labelledby="bank-tab">
+                             {# ... Bank details content apdiye irukkattum ... #}
+                             <div class="bank-details">
+                               <h4 class="h6 mb-3 text-center">Bank Account Details for NEFT/IMPS:</h4>
+                               <p><strong>Account Name:</strong> MR.JENSON BELIX PAUL A</p>
+                               <p><strong>Account Number:</strong> 31578492936</p> {# TODO: REPLACE #}
+                               <p><strong>Bank Name:</strong> STATE BANK OF INDIA</p> {# TODO: REPLACE #}
+                               <p><strong>Branch:</strong> SRIVAIKUNTAM
+                            NORTH MASI STREET</p> {# TODO: REPLACE #}
+                               <p><strong>IFSC Code:</strong> SBIN0000920</p> {# TODO: REPLACE #}
+                               <p class="small text-muted mt-3">Please mention the purpose (e.g., Tithe, Offering, Building Fund) in the remarks/notes section if possible.</p>
+                             </div>
+                        </div>
+                    </div>
+
+                    {# === PUTHU SUBMISSION FORM INGEY === #}
+                    <div class="card info-submission-card mt-5">
+                        <div class="card-header">
+                            Optional: Let Us Know About Your Donation
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text small text-muted mb-3">If you've made a donation, you can optionally fill this form to help us acknowledge your contribution.</p>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show text-center small" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+
+                            <form action="{{ url_for('submit_donation_info') }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="donor_name" class="form-label">Your Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control form-control-sm" id="donor_name" name="donor_name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="donation_reason" class="form-label">Reason/Purpose (Optional)</label>
+                                    <input type="text" class="form-control form-control-sm" id="donation_reason" name="donation_reason" placeholder="e.g., Tithe, Offering, Building Fund">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="donation_method" class="form-label">Method Used (Optional)</label>
+                                    <select class="form-select form-select-sm" id="donation_method" name="donation_method">
+                                        <option value="" selected>Select Method...</option>
+                                        <option value="GPay/UPI">GPay / UPI (QR Scan)</option>
+                                        <option value="Bank Transfer">Bank Transfer (NEFT/IMPS)</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-sm w-100">Submit Donation Info</button>
+                            </form>
+                        </div>
+                    </div>
+                    {# ================================== #}
+
+                </div> </div> </div> </div> </div> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+{% endblock %}

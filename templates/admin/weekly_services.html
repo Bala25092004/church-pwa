@@ -1,0 +1,118 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Manage Weekly Services{% endblock %}
+
+{% block admin_content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">Manage Weekly Service Schedule</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+            <i class="bi bi-plus-circle-fill me-2"></i> Add New Service
+        </button>
+    </div>
+
+    {% include '_flash_messages.html' ignore missing %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Service Name</th>
+                            <th scope="col">Timing</th>
+                            <th scope="col">Order</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in services %}
+                        <tr>
+                            <td><strong>{{ service.service_name }}</strong></td>
+                            <td>{{ service.timing }}</td>
+                            <td>{{ service.display_order }}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-secondary me-1" data-bs-toggle="modal" data-bs-target="#editServiceModal{{ service.id }}">
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </button>
+                                <a href="{{ url_for('delete_weekly_service', id=service.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete \'{{ service.service_name }}\'?')">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No weekly services added yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addServiceModalLabel">Add New Weekly Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_weekly_service') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="add-service_name" class="form-label">Service Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add-service_name" name="service_name" placeholder="e.g., Sunday Worship Service" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add-timing" class="form-label">Timing <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add-timing" name="timing" placeholder="e.g., Every Sunday at 9:00 AM" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add-display_order" class="form-label">Display Order (Optional)</label>
+                        <input type="number" class="form-control" id="add-display_order" name="display_order" value="0" placeholder="Lower numbers appear first">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for service in services %}
+<div class="modal fade" id="editServiceModal{{ service.id }}" tabindex="-1" aria-labelledby="editServiceModalLabel{{ service.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editServiceModalLabel{{ service.id }}">Edit: {{ service.service_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('edit_weekly_service', id=service.id) }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit-service_name-{{ service.id }}" class="form-label">Service Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-service_name-{{ service.id }}" name="service_name" value="{{ service.service_name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-timing-{{ service.id }}" class="form-label">Timing <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-timing-{{ service.id }}" name="timing" value="{{ service.timing }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-display_order-{{ service.id }}" class="form-label">Display Order</label>
+                        <input type="number" class="form-control" id="edit-display_order-{{ service.id }}" name="display_order" value="{{ service.display_order }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock admin_content %}

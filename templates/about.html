@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+{% block title %}About Us - {{ super() }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for the About page */
+    .about-header {
+        background: linear-gradient(rgba(13, 44, 84, 0.6), rgba(19, 64, 116, 0.6)), url('{{ url_for('static', filename='images/church-bg.jpg') }}') no-repeat center center; /* Corrected URL generation */
+        background-size: cover;
+        padding: 4rem 1.5rem;
+        color: white;
+        text-align: center;
+        margin-bottom: 3rem;
+        border-radius: 0 0 15px 15px;
+    }
+    .about-header h1 {
+        font-weight: 700;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    }
+    .pastor-card {
+        text-align: center; border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        border-radius: 15px; transition: transform 0.3s ease; background-color: #1430ce;
+        margin-top: 50px; padding-top: 85px; position: relative;
+    }
+    .pastor-card:hover { transform: translateY(-8px); }
+    .pastor-img {
+        width: 150px; height: 150px; object-fit: cover; border-radius: 50%;
+        position: absolute; top: -75px; left: 50%; transform: translateX(-50%);
+        border: 6px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    }
+    .member-card {
+        text-align: center; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-radius: 12px; transition: transform 0.3s ease; background-color: #b9afd1;
+        padding-top: 1.5rem;
+    }
+    .member-card:hover { transform: translateY(-5px); }
+    .member-img {
+        width: 100px; height: 100px; object-fit: auto; border-radius: 50%;
+        margin: 0 auto 1rem auto;
+        border: 1px solid #01070e;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .member-card .card-title { font-weight: 600; color: #333; }
+    .member-card .card-subtitle { font-size: 0.9rem; color: #6c757d; }
+    .section-divider { border-top: 1px solid rgb(21, 113, 206); margin: 3rem auto; width: 80%; }
+    .card h3 i { color: var(--color-primary); /* Corrected: Removed extra brace */ }
+</style>
+
+<header class="about-header fade-in">
+    <div class="container">
+        <h1 class="display-4">About Our Church</h1>
+        <p class="lead">Serving the community with faith and love.</p>
+    </div>
+</header>
+
+<div class="container my-5">
+
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto text-center">
+            <h2 class="mb-4 display-6">Our Journey of Faith</h2>
+            <p class="lead text-muted" style="line-height: 1.8;">
+                Welcome to CSI Ulaga Ratchagar Aalayam in Thiruvarangapatti! Our spiritual journey began humbly in **1950** with a simple thatched roof (கூரை) structure, founded by faithful believers. By God's grace, we constructed our **old church building in 1963**, which served our growing congregation for many years. We joyfully celebrated our **50th Golden Jubilee in 2000**. As our church family continued to expand, the need for a larger space became evident, leading to the construction of our beautiful **new church building in 2016**. The magnificent **Kopuram (கோபுரம்) was added in 2017**, standing tall as a symbol of our faith. We look forward with gratitude to celebrating our **75th Platinum Jubilee in 2025**, marking decades of unwavering service and devotion in this community.
+            </p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 d-flex align-items-stretch"> {# Added d-flex #}
+            <div class="card h-100 p-4 shadow-sm border-0 w-100"> {# Added w-100 #}
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-3"><i class="bi bi-eye-fill me-2"></i> Our Vision</h3>
+                    <p class="card-text text-muted">
+                        To be a guiding light in the community, leading souls to Christ, and building a faithful generation that lives in His image and for His glory.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch"> {# Added d-flex #}
+            <div class="card h-100 p-4 shadow-sm border-0 w-100"> {# Added w-100 #}
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-3"><i class="bi bi-flag-fill me-2"></i> Our Mission</h3>
+                    <p class="card-text text-muted">
+                        To worship God faithfully, nurture believers through His Word, serve those in need with Christ's love, and share the good news of salvation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+
+    {# === ADDED MISSING DIVIDER === #}
+    <hr class="section-divider">
+
+    <div class="row justify-content-center text-center">
+         {# === ADDED MISSING TITLE === #}
+        <div class="col-12">
+        </div>
+
+         <div class="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+            <div class="card member-card w-100">
+                 {# TODO: Replace placeholder image path #}
+                <img src="{{ url_for('static', filename='images/member2-placeholder.jpg') }}" alt="Head of Association" class="member-img">
+                <div class="card-body">
+                    <h5 class="card-title">Rev. G. Baskaran M.Com., M.A.(CS)., B.D.</h5>
+                    <h6 class="card-text small mb-2"><a href="tel:+918300176830" class="text-decoration-none text-muted"><i class="bi bi-telephone-fill me-1"></i>+91 83001 76830</a></h6>
+                    <h6 class="card-subtitle mb-2 text-muted"> Head of the Association (சேகர தலைவர்)</h6>
+                </div>
+            </div>
+        </div>
+
+        {# Card for Head Member 1 #}
+        <div class="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+            <div class="card member-card w-100">
+                 {# TODO: Replace placeholder image path #}
+                <img src="{{ url_for('static', filename='images/member1-placeholder.jpg') }}" alt="Head Mentor" class="member-img">
+                <div class="card-body">
+                    <h5 class="card-title">Rev. S. Anand Samuel John Thomas, B.A, B.D</h5>
+                    <h6 class="card-text small mb-2"><a href="tel:+919965042181" class="text-decoration-none text-muted"><i class="bi bi-telephone-fill me-1"></i>+91 99650 42181</a></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Head Mentor (சேகரகுரு)</h6>
+                </div>
+            </div>
+        </div>
+
+        {# Card for Head Member 2 #}
+       
+
+        {# Card for Head Member 3 #}
+        <div class="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+            <div class="card member-card w-100">
+                 {# TODO: Replace placeholder image path #}
+                <img src="{{ url_for('static', filename='images/member3-placeholder.jpg') }}" alt="Council Staff" class="member-img">
+                <div class="card-body">
+                    <h5 class="card-title">A. Rajesh B.TH., M.DIV</h5>
+                    <h6 class="card-text small mb-2"><a href="tel:+919486214201" class="text-decoration-none text-muted"><i class="bi bi-telephone-fill me-1"></i>+91 94862 14201</a></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Council Staff (சபை ஊழியர்)</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> {# === Moved Bootstrap Icons Link inside block === #}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+{% endblock %}

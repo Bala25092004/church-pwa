@@ -1,0 +1,78 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Manage Gallery{% endblock %}
+
+{% block admin_content %}
+<div class="container my-5">
+    <h1 class="h2 mb-4">Manage Gallery Images</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-upload me-2"></i>Upload New Images</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('upload_gallery_image') }}" method="POST" enctype="multipart/form-data">
+                
+                <div class="row g-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="main_folder" class="form-label">Main Folder (e.g., Year) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="main_folder" name="main_folder" placeholder="e.g., 2025" required>
+                        <small class="form-text text-muted">A folder to group events (like a year).</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="sub_folder" class="form-label">Sub-Folder (e.g., Event Name) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="sub_folder" name="sub_folder" placeholder="e.g., Christmas or Easter" required>
+                        <small class="form-text text-muted">The name of the event or album.</small>
+                    </div>
+                </div>
+                <hr>
+                
+                <div class="mb-3">
+                    <label for="photos" class="form-label">Select Images to Upload <span class="text-danger">*</span></label>
+                    <input class="form-control" type="file" id="photos" name="photos" multiple required>
+                    <small class="form-text text-muted">You can select multiple files (JPG, PNG, GIF).</small>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload me-2"></i> Upload Images
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <h3 class="h4 mb-3">Uploaded Images</h3>
+
+    {% if gallery_data %}
+        {% for main_folder_group in gallery_data %}
+        <div class="mb-4 p-3 border rounded bg-light shadow-sm">
+            <h4 class="h5 mb-3">{{ main_folder_group.main_folder | replace('_', ' ') | title }}</h4>
+            
+            {% for event in main_folder_group.events %}
+            <div class="mb-3 p-3 border rounded bg-white">
+                <h5 class="h6 mb-3 text-muted">{{ event.event_name | replace('_', ' ') | title }}</h5>
+                <div class="row g-3">
+                    {% for image in event.images %}
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ url_for('static', filename='images/gallery/' + main_folder_group.main_folder + '/' + event.event_name + '/' + image) }}" 
+                                 class="card-img-top" alt="{{ image }}" style="height: 150px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column p-2">
+                                <p class="card-text small text-muted text-truncate mb-2" title="{{ image }}">{{ image }}</p>
+                                <a href="{{ url_for('delete_gallery_image', main_folder=main_folder_group.main_folder, sub_folder=event.event_name, filename=image) }}"
+                                   class="btn btn-sm btn-outline-danger mt-auto"
+                                   onclick="return confirm('DELETE \'{{ image }}\' from \'{{ event.event_name }}\'?')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %} {# End image loop #}
+                </div> {# End .row #}
+            </div> {# End sub-folder wrapper #}
+            {% endfor %} {# End event/sub-folder loop #}
+        </div> {# End main folder section #}
+        {% endfor %} {# End main_folder loop #}
+    {% else %}
+        <p class="text-muted">No images have been uploaded yet.</p>
+    {% endif %}
+
+</div>
+{% endblock admin_content %}
