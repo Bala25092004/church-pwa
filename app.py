@@ -138,20 +138,52 @@ def convert_to_embed_url(url_str): # Video link-ku ithu theva
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# app.py file-ல, intha functions-a update pannunga
+
 def get_daily_bible_verse():
+    # === தினசரி தமிழ் வசனங்கள் (Daily Tamil Verses) ===
     verses = [
-        {"ref": "John 3:16", "text": "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."},
-        {"ref": "Philippians 4:13", "text": "I can do all this through him who gives me strength."},
-        {"ref": "Proverbs 3:5-6", "text": "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight."}
+        # Existing Verses
+        {"ref": "யோவான் 3:16", "text": "தேவன் உலகத்தில் அன்பு கூர்ந்ததால், தம்முடைய ஒரே பேரான குமாரனை விசுவாசிக்கிறவன் எவனோ, அவன் கெட்டுப்போகாமல் நித்திய ஜீவனை அடையும்படி அவரைத் தந்தருளினார்."},
+        {"ref": "பிலிப்பியர் 4:13", "text": "என்னை பலப்படுத்துகிற கிறிஸ்துவினாலே எல்லாவற்றையும் செய்ய எனக்கு பெலனுண்டு."},
+        {"ref": "நீதிமொழிகள் 3:5-6", "text": "உன் முழு இருதயத்தோடும் கர்த்தரில் நம்பிக்கையாயிரு; உன் சொந்த புத்தியை சார்ந்து கொள்ளாதே. உன் வழிகளிலெல்லாம் அவரை நினைத்துக் கொள்; அப்பொழுது அவரே உன் பாதைகளை செவ்வைப்படுத்துவார்."},
+        
+        # New Verses Added
+        {"ref": "சங்கீதம் 23:1", "text": "கர்த்தர் என் மேய்ப்பராயிருக்கிறார், எனக்குக் குறைவில்லை."},
+        {"ref": "ஏசாயா 41:10", "text": "நீ பயப்படாதே, நான் உன்னுடனே இருக்கிறேன்; திகையாதே, நான் உன் தேவன்; நான் உன்னைப் பலப்படுத்தி, உனக்குத் துணை செய்வேன்; என் நீதியுள்ள வலது கையால் உன்னைத் தாங்குவேன்."},
+        {"ref": "மத்தேயு 6:33", "text": "முதலாவது அவருடைய ராஜ்யத்தையும் அவருடைய நீதியையும் தேடுங்கள்; அப்பொழுது இவைகளெல்லாம் உங்களுக்குக் கூடக் கொடுக்கப்படும்."}
     ]
-    return random.choice(verses) if verses else {"ref": "Info", "text": "Verse unavailable."}
+    # ==================================================
+    return random.choice(verses) if verses else {"ref": "தகவல்", "text": "வசனம் கிடைக்கவில்லை."}
+
 
 def get_birthday_verse():
-    verses = [{"ref": "Numbers 6:24-26", "text": "The LORD bless you and keep you..."}, {"ref": "Psalm 118:24", "text": "This is the day the LORD has made..."}]
+    # === பிறந்தநாள் தமிழ் வசனங்கள் (Birthday Tamil Verses) ===
+    verses = [
+        # Existing Verses
+        {"ref": "எண்ணாகமம் 6:24-26", "text": "கர்த்தர் உன்னை ஆசீர்வதித்து உன்னை காக்கக் கடவர்; கர்த்தர் தம்முடைய முகத்தை உன்மேல் பிரகாசிக்கப் பண்ணி, உனக்கு கிருபை செய்யக் கடவர்; கர்த்தர் தம்முடைய முகத்தை உன்மேல் பிரசன்னமாக்கி, உனக்கு சமாதானம் கட்டளையிடக் கடவர்."},
+        {"ref": "சங்கீதம் 118:24", "text": "இது கர்த்தர் உண்டு பண்ணின நாள்; இன்று நாம் களிகூர்ந்து மகிழக் கடவோம்."},
+        
+        # New Verses Added
+        {"ref": "சங்கீதம் 91:16", "text": "நீடித்த நாட்களால் அவனைத் திருப்தியாக்கி, என் இரட்சிப்பை அவனுக்குக் காண்பிப்பேன்."},
+        {"ref": "யோவான் 10:10", "text": "நானோ அவைகளுக்கு ஜீவன் உண்டாயிருக்கவும், அது பரிபூரணப்படவும் வந்தேன்."}
+    ]
+    # =======================================================
     return random.choice(verses) if verses else None
 
+
 def get_marriage_verse():
-    verses = [{"ref": "1 Corinthians 13:4-7", "text": "Love is patient, love is kind..."}, {"ref": "Ephesians 4:2-3", "text": "Be completely humble and gentle..."}]
+    # === திருமண நாள் தமிழ் வசனங்கள் (Marriage Tamil Verses) ===
+    verses = [
+        # Existing Verses
+        {"ref": "1 கொரிந்தியர் 13:4-7", "text": "அன்பு நீடிய சாந்தமும் தயவுமுள்ளது. அன்பு பொறாமைப்படாது... இது எல்லாவற்றையும் தாங்கும், எல்லாவற்றையும் விசுவாசிக்கும், எல்லாவற்றையும் நம்பும், எல்லாவற்றிலும் பொறுமையாயிருக்கும்."},
+        {"ref": "எபேசியர் 4:2-3", "text": "தாழ்மை மற்றும் சாந்தத்தோடும், நீடிய பொறுமையோடும், ஒருவரையொருவர் அன்போடு சகித்து, ஆவியின் ஐக்கியத்தை சமாதான கட்டினால் காத்துக்கொள்ளுங்கள்."},
+        
+        # New Verses Added
+        {"ref": "ஆதியாகமம் 2:24", "text": "இதினிமித்தம் புருஷனானவன் தன் தகப்பனையும் தாயையும் விட்டு, தன் மனைவியோடே இசைந்திருப்பான்; அவர்கள் ஒரே மாம்சமாயிருப்பார்கள்."},
+        {"ref": "எபேசியர் 5:25", "text": "புருஷர்களே, உங்கள் மனைவிகளில் அன்பு கூறுங்கள்; அதுபோலக் கிறிஸ்துவும் சபையில் அன்பு கூர்ந்து, அதைத் தமக்காக ஒப்புக்கொடுத்தார்."}
+    ]
+    # =========================================================
     return random.choice(verses) if verses else None
 
 def parse_date_or_none(date_str):
