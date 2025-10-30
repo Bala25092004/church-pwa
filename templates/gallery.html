@@ -2,40 +2,6 @@
 {% block title %}Gallery - {{ super() }}{% endblock %}
 
 {% block content %}
-<style>
-    /* Intha file-la style theva illa, ellam style.css-la irunthu varum */
-    
-    /* Puthu video section-ku style */
-    .video-gallery-section {
-        margin-top: 4rem; /* Image gallery-kum video gallery-kum space */
-        padding-top: 2.5rem;
-        border-top: 1px solid var(--color-border-dark);
-    }
-    .video-card {
-        border-radius: 15px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        overflow: hidden; /* Iframe-a sariya vekka */
-    }
-    .video-card .card-title {
-        font-family: var(--font-body);
-        font-weight: 600;
-        font-size: 1.1rem;
-        color: var(--color-text-dark);
-    }
-    .video-wrapper {
-        position: relative;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-        height: 0;
-        overflow: hidden;
-    }
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-</style>
 
 <div class="container my-5">
     
@@ -43,9 +9,26 @@
         <h1 class="display-4">Image Gallery</h1>
         <p class="lead text-muted">Moments and memories from our church life.</p>
     </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-camera-video-fill me-2"></i> Video Link </h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('add_gallery_video') }}" method="POST">
+                <div class="mb-3">
+        <label for="video_url" class="form-label"><h3>click the link</h3><span class="text-danger"></span></label>
+            <a href="https://photos.google.com/?pli=1"><h3>video link </h3></a>
+                </div>
+                <div class="mb-3">
+                </div>
+            </form>
+        </div>
+    </div>
 
     {% if gallery_data %}
+        <h2 class="display-6 mb-4">Photos</h2>
         <div class="accordion gallery-accordion" id="galleryAccordionRoot">
+            
             {% for main_folder_group in gallery_data %}
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-{{ main_folder_group.main_folder }}">
@@ -59,6 +42,7 @@
                 <div id="collapse-{{ main_folder_group.main_folder }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" 
                      aria-labelledby="heading-{{ main_folder_group.main_folder }}" data-bs-parent="#galleryAccordionRoot">
                     <div class="accordion-body">
+                        
                         <div class="accordion" id="subAccordion-{{ main_folder_group.main_folder }}">
                             {% for event in main_folder_group.events %}
                             <div class="accordion-item border-0 mb-2">
@@ -73,6 +57,7 @@
                                 <div id="collapse-event-{{ main_folder_group.main_folder }}-{{ event.event_name }}" class="accordion-collapse collapse" 
                                      aria-labelledby="heading-event-{{ event.event_name }}" data-bs-parent="#subAccordion-{{ main_folder_group.main_folder }}">
                                     <div class="accordion-body">
+                                        
                                         <div class="row g-3">
                                             {% for image in event.images %}
                                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -83,6 +68,7 @@
                                                          data-bs-target="#imgModal-{{ main_folder_group.main_folder }}-{{ event.event_name }}-{{ loop.index }}">
                                                 </div>
                                             </div>
+
                                             <div class="modal fade full-glass-modal" id="imgModal-{{ main_folder_group.main_folder }}-{{ event.event_name }}-{{ loop.index }}" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
@@ -110,24 +96,17 @@
             </div>
             {% endfor %}
         </div>
-    {% elif not video_clips %} {# Image-um illa, video-vum illaina thaan itha kaattanum #}
-        <div class="col-12">
-            <div class="alert alert-info text-center" role="alert">
-                <h4 class="alert-heading">No Images or Videos Yet</h4>
-                <p>The gallery is currently empty.</p>
-            </div>
-        </div>
     {% endif %}
     
-    {% if video_clips %}
+    {% if videos %}
     <section class="video-gallery-section">
-        <h2 class="gallery-header-title text-center display-6 mb-4">Video Clips</h2>
+        <h2 class="gallery-header-title text-center display-6 mb-4"></h2>
         <div class="row g-4">
-            {% for clip in video_clips %}
+            {% for clip in videos %}
             <div class="col-md-6">
                 <div class="card video-card">
                     <div class="video-wrapper">
-                        <iframe src="{{ clip.embed_url }}" 
+                        <iframe src="{{ clip.video_embed_url }}" 
                                 title="{{ clip.title }}" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -135,7 +114,7 @@
                         </iframe>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ clip.title }}</h5>
+                        <h5 class="card-title"></h5>
                     </div>
                 </div>
             </div>
@@ -143,5 +122,15 @@
         </div>
     </section>
     {% endif %}
-    </div>
+
+    {% if not gallery_data and not videos %}
+        <div class="col-12">
+            <div class="alert alert-info text-center" role="alert">
+                <h4 class="alert-heading">No Images  Yet</h4>
+                <p>The gallery is currently empty.</p>
+            </div>
+        </div>
+    {% endif %}
+        
+</div>
 {% endblock %}

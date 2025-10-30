@@ -404,3 +404,35 @@ body.admin-body {
 
 /* === Matha CSS Code-a Maatha Venaam === */
 /* ... (matha styles apdiye irukkattum) ... */
+
+/* ... (matha styles) ... */
+
+/* --- Full-Screen Glassmorphism Modal Styles --- */
+.full-glass-modal .modal-dialog {
+    max-width: 100vw; height: 100vh; margin: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+}
+.full-glass-modal .modal-content {
+    /* === ITHA MAATHIRUKEN === */
+    background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.15) 0%, /* Light transparent */
+                rgba(255, 255, 255, 0.05) 100%
+            );
+    /* ======================== */
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+}
+.full-glass-modal .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+    border-top-left-radius: 23px; border-top-right-radius: 23px; padding: 1.2rem 1.8rem;
+}
+.full-glass-modal .modal-title {
+    color: var(--color-white); text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    font-family: var(--font-heading); font-weight: 700; font-size: 2rem;
+}
+/* ... (matha styles apdiye irukkattum) ... */

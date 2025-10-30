@@ -3,11 +3,14 @@
 
 {% block admin_content %}
 <div class="container my-5">
-    <h1 class="h2 mb-4">Manage Gallery Images</h1>
+    <h1 class="h2 mb-4">Manage Gallery Images & Videos</h1>
 
+    {% include '_flash_messages.html' ignore missing %}
+
+    
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-upload me-2"></i>Upload New Images</h5>
+            <h5 class="mb-0"><i class="bi bi-upload me-2"></i>Upload New Images (Multi-Upload)</h5>
         </div>
         <div class="card-body">
             <form action="{{ url_for('upload_gallery_image') }}" method="POST" enctype="multipart/form-data">
@@ -35,8 +38,13 @@
             </form>
         </div>
     </div>
+    
+    
+                
+        
+    </div>
 
-    <h3 class="h4 mb-3">Uploaded Images</h3>
+    <h3 class="h4 mb-3 mt-5">Uploaded Images</h3>
 
     {% if gallery_data %}
         {% for main_folder_group in gallery_data %}
@@ -52,7 +60,7 @@
                        onclick="return confirm('WARNING: Are you sure you want to delete the ENTIRE folder \'{{ event.event_name }}\' and all images inside it?')">
                         <i class="bi bi-trash-fill me-1"></i> Delete All
                     </a>
-                    </div>
+                </div>
                 <div class="row g-3">
                     {% for image in event.images %}
                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
@@ -69,12 +77,12 @@
                             </div>
                         </div>
                     </div>
-                    {% endfor %} {# End image loop #}
-                </div> {# End .row #}
-            </div> {# End sub-folder wrapper #}
-            {% endfor %} {# End event/sub-folder loop #}
-        </div> {# End main folder section #}
-        {% endfor %} {# End main_folder loop #}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
     {% else %}
         <p class="text-muted">No images have been uploaded yet.</p>
     {% endif %}

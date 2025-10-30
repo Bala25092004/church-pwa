@@ -81,7 +81,14 @@ class Sermon(db.Model):
     date = db.Column(db.Date, nullable=False)
     youtube_embed_url = db.Column(db.String(255), nullable=True)
 
-# === VideoClip MODEL DELETE PANNITOM ===
+# === Puthu Video Link Model ===
+class VideoClip(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    # 500 size kodukkirom, Google Drive / Vimeo embed links romba perisaaga irukkalaam
+    video_embed_url = db.Column(db.String(500), nullable=False) 
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+# ==============================
 
 class PrayerRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -132,7 +139,11 @@ def convert_to_embed_url(url_str): # Video link-ku ithu theva
         
         if video_id and len(video_id) >= 11 and all(c.isalnum() or c in ['-', '_'] for c in video_id): return f"https://www.youtube.com/embed/{video_id}"
         elif 'player.vimeo.com' in url_str: return url_str
-        else: print(f"Invalid YT/Vimeo ID: {url_str}"); return None
+        # Google Drive links-kku direct embed link-a return pannalaam, aanaal adhu user-a depend panni irukkum.
+        # Idhukku enna seiya mudiyadho adha "None" aakki flash message kaattuvom.
+        elif 'drive.google.com' in hostname and '/view' in parsed_url.path:
+             print("Warning: Google Drive links often need manual embed code."); return url_str
+        else: print(f"Invalid or unsupported URL format: {url_str}"); return None
     except Exception as e: print(f"YT/Vimeo Parse Error '{url_str}': {e}"); return None
 
 def allowed_file(filename):
@@ -313,8 +324,16 @@ def submit_donation_info():
 @app.route('/gallery')
 def gallery():
     gallery_data = get_gallery_data()
-    # === VIDEO CLIP CODE DELETE PANNITOM ===
-    return render_template('gallery.html', gallery_data=gallery_data)
+    videos = []
+    try:
+        # Public-aana page-kku videos-a fetch seyyirom
+        videos = VideoClip.query.order_by(VideoClip.uploaded_at.desc()).all()
+    except Exception as e:
+        print(f"Video fetch error in gallery: {e}")
+        videos = []
+
+    # 'videos'-a render_template-kku pass seyyavum
+    return render_template('gallery.html', gallery_data=gallery_data, videos=videos)
 
 @app.route('/contact')
 def contact(): return render_template('contact.html')
@@ -558,11 +577,67 @@ def delete_sermon(id):
     except Exception as e: db.session.rollback(); flash(f'Error: {e}', 'danger'); print(f"Delete sermon error: {e}")
     return redirect(url_for('admin_sermons'))
 
+# --- Gallery Routes (Video and Image) ---
 @app.route('/admin/gallery')
 @admin_required
 def admin_gallery():
     gallery_data = get_gallery_data()
-    return render_template('admin/manage_gallery.html', gallery_data=gallery_data)
+    videos = []
+    try:
+        # Puthu VideoClip model-la irundhu videos-a fetch seyyirom
+        videos = VideoClip.query.order_by(VideoClip.uploaded_at.desc()).all()
+    except Exception as e:
+        print(f"Video fetch error in admin_gallery: {e}")
+        flash('Error loading video clips from database.', 'warning')
+        
+    # 'videos'-a render_template-kku pass seyyavum
+    return render_template('admin/manage_gallery.html', gallery_data=gallery_data, videos=videos)
+
+@app.route('/admin/gallery/add_video', methods=['POST'])
+@admin_required
+def add_gallery_video():
+    title = request.form.get('video_title')
+    raw_url = request.form.get('video_url')
+
+    if not title or not raw_url:
+        flash('Video Title and Embed URL are required.', 'warning')
+        return redirect(url_for('admin_gallery'))
+    
+    # helper function-a use panni URL-a embed link-a maathuvadharkku muyarchi seyyirom
+    embed_url = convert_to_embed_url(raw_url)
+
+    if not embed_url:
+        flash(f'Invalid or unsupported Video URL: "{raw_url}". Please use the FULL Embed Link (YouTube/Vimeo/Google Drive) for proper display.', 'danger')
+        return redirect(url_for('admin_gallery'))
+
+    try:
+        new_video = VideoClip(title=title, video_embed_url=embed_url)
+        db.session.add(new_video)
+        db.session.commit()
+        flash(f'Video Link "{title}" added successfully!', 'success')
+        log_activity(f"Video added: '{title}' ({embed_url})")
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Database Error: Could not add video link. {e}', 'danger')
+        print(f"Add gallery video error: {e}")
+
+    return redirect(url_for('admin_gallery'))
+
+@app.route('/admin/gallery/delete_video/<int:id>')
+@admin_required
+def delete_gallery_video(id):
+    video = VideoClip.query.get_or_404(id)
+    title = video.title
+    try:
+        db.session.delete(video)
+        db.session.commit()
+        flash(f'Video Link "{title}" deleted!', 'success')
+        log_activity(f"Video deleted: '{title}'")
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting video link: {e}', 'danger')
+        print(f"Delete gallery video error: {e}")
+    return redirect(url_for('admin_gallery'))
 
 @app.route('/admin/gallery/upload', methods=['POST'])
 @admin_required
@@ -826,7 +901,6 @@ def admin_donations():
     except Exception as e: donations = []; flash(f'Error: {e}', 'danger'); print(f"Admin Donations load error: {e}")
     return render_template('admin/donations.html', donations=donations)
 
-# === VIDEO ROUTES DELETE PANNITOM ===
 
 # --- Database Initialization Command ---
 @app.cli.command('init-db')
@@ -841,8 +915,8 @@ def init_db_command():
         if db_exists:
             try:
                 inspector = db.inspect(db.engine)
-                # === 'video_clip' TABLE-A DELETE PANNITOM ===
-                required_tables = {'user', 'member', 'event', 'sermon', 'prayer_request', 'notice', 'activity_log', 'weekly_service', 'donation'}
+                # === 'videoclip' TABLE-A PUTHUSA ADD PANNI IRUKKOM ===
+                required_tables = {'user', 'member', 'event', 'sermon', 'videoclip', 'prayer_request', 'notice', 'activity_log', 'weekly_service', 'donation'}
                 existing_tables = set(inspector.get_table_names())
                 if not required_tables.issubset(existing_tables):
                     print(f"\nDB Schema Error: Missing tables: {required_tables - existing_tables}"); schema_ok = False
