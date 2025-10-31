@@ -25,7 +25,7 @@ from sqlalchemy import extract
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-strong-secret-key-replace-me-123456789')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin123csi@2025@db.jnexthvrppoggzajdr.supabase.co:5432/postgres'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # --- Flask-Mail Configuration ---
